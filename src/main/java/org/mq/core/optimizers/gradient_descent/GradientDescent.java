@@ -1,15 +1,6 @@
 package org.mq.core.optimizers.gradient_descent;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.la4j.LinearAlgebra;
 import org.la4j.Matrix;
-import org.la4j.Vector;
-import org.la4j.matrix.DenseMatrix;
 import java.lang.Math;
 import org.mq.core.optimizers.functions.DifferentiableFunction;
 
@@ -50,6 +41,15 @@ public class GradientDescent
         {
             overallObjective = function.Evaluate(iterate);
 
+            if ((i % (maxIterations / 10)) == 0)
+            {
+                System.out.print("Gradient Descent: iteration ");
+                System.out.print(i);
+                System.out.print(", objective ");
+                System.out.print(overallObjective);
+                System.out.println(".");
+            }
+
             if (Double.isNaN(overallObjective) || Double.isInfinite(overallObjective))
             {
                 System.out.print("Gradient Descent: converged to ");
@@ -69,9 +69,6 @@ public class GradientDescent
                 loss = overallObjective;
                 return iterate;
             }
-
-            System.out.print("Loss: ");
-            System.out.println(overallObjective);
 
             Matrix gradient;
             gradient = function.Gradient(iterate);
