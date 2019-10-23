@@ -25,7 +25,7 @@ public class GradientDescentTestFunction extends DifferentiableFunction
         GradientDescentTestFunction function = new GradientDescentTestFunction();
         GradientDescent optimizer = new GradientDescent(0.01, 1000, 1e-9);
 
-        double[][] A= {{1, 3, 2}};
+        double[][] A = {{1, 3, 2}};
         Matrix M = Matrix.from2DArray(A);
 
         optimizer.Optimize(function, M);

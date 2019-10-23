@@ -35,7 +35,7 @@ public class SGDTestFunction extends DifferentiableFunction
         SGDTestFunction function = new SGDTestFunction();
         SGD optimizer = new SGD(0.01, 1000, 1e-9, 1);
 
-        double[][] A= {{1, 3, 2}};
+        double[][] A = {{1, 3, 2}};
         Matrix M = Matrix.from2DArray(A);
 
         optimizer.Optimize(function, M);
