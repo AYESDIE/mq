@@ -83,7 +83,6 @@ public class LinearRegressionFunction extends DifferentiableFunction {
             gradient = (gradient.multiply(dataset)).divide(numFunctions());
         }
 
-        System.out.println(gradient);
         Matrix reg = (iterate.multiply(lambda * 1.0 / numFunctions()));
         return gradient.add(reg);
     }

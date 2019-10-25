@@ -164,31 +164,92 @@ public class LinearRegressionTest
     @Test
     public void LinearRegressionFunctionSimpleGradient()
     {
-        double[][] array = {{1, 2},
-                            {3, 4},
-                            {5, 6}};
-        Matrix dataset = Matrix.from2DArray(array);
 
-        array = new double[][]{{1, 2, 3}};
-        Matrix labels = Matrix.from2DArray(array);
+        double[][] D = {{1, 2, 3},
+                        {4, 5, 6},
+                        {7, 8, 9},
+                        {10, 11, 12}};
+        Matrix dataset = Matrix.from2DArray(D);
 
-        array = new double[][]{{0.1, 0.2}};
-        Matrix params = Matrix.from2DArray(array);
+        double[][] L = new double[][]{{1, 2, 3, 4}};
+        Matrix labels = Matrix.from2DArray(L);
 
         LinearRegressionFunction lrf = new LinearRegressionFunction(dataset, labels);
 
+        double[][] I = new double[][]{{1, 1, 1}};
+        Matrix iterate = Matrix.from2DArray(I);
 
-        System.out.println(lrf.Gradient(params, 0, 1));
-        System.out.println(lrf.Gradient(params, 1, 1));
-        System.out.println(lrf.Gradient(params, 2, 1));
+        Matrix Gradient = lrf.Gradient(iterate);
+        Assert.assertEquals(Gradient.get(0,0), 123.5, 1e-5);
+        Assert.assertEquals(Gradient.get(0,1), 140.5, 1e-5);
+        Assert.assertEquals(Gradient.get(0,2), 157.5, 1e-5);
 
-        SGD gd = new SGD(0.003, 30000, 1e-20, 1);
-        params = gd.Optimize(lrf, params);
-        System.out.println(params);
+        I = new double[][]{{0.0, 0.0, 1.0/3}};
+        iterate = Matrix.from2DArray(I);
+        Gradient = lrf.Gradient(iterate);
+        Assert.assertEquals(Gradient.get(0,0), 0, 1e-5);
+        Assert.assertEquals(Gradient.get(0,1), 0, 1e-5);
+        Assert.assertEquals(Gradient.get(0,2), 0, 1e-5);
 
-        System.out.println(params.multiply(dataset.transpose()));
-
+        I = new double[][]{{10, -204.5, 23.5}};
+        iterate = Matrix.from2DArray(I);
+        Gradient = lrf.Gradient(iterate);
+        Assert.assertEquals(Gradient.get(0,0), -7980.25, 1e-5);
+        Assert.assertEquals(Gradient.get(0,1), -9080.75, 1e-5);
+        Assert.assertEquals(Gradient.get(0,2), -10181.25, 1e-5);
     }
+
+    @Test
+    public void LinearRegressionFunctionSimpleSeparableGradient()
+    {
+        double[][] D = {{1, 2, 3},
+                        {4, 5, 6},
+                        {7, 8, 9},
+                        {10, 11, 12}};
+        Matrix dataset = Matrix.from2DArray(D);
+
+        double[][] L = new double[][]{{1, 2, 3, 4}};
+        Matrix labels = Matrix.from2DArray(L);
+
+        LinearRegressionFunction lrf = new LinearRegressionFunction(dataset, labels);
+
+        double[][] I = new double[][]{{1, 1, 1}};
+        Matrix iterate = Matrix.from2DArray(I);
+        Matrix gradient = lrf.Gradient(iterate);
+        Matrix separableGradient = lrf.Gradient(iterate, 0, 1);
+        separableGradient = separableGradient.add(lrf.Gradient(iterate, 1, 1));
+        separableGradient = separableGradient.add(lrf.Gradient(iterate, 2, 1));
+        separableGradient = separableGradient.add(lrf.Gradient(iterate, 3, 1));
+        separableGradient = separableGradient.divide(4);
+        Assert.assertEquals(gradient.get(0,0), separableGradient.get(0, 0), 1e-5);
+        Assert.assertEquals(gradient.get(0,1), separableGradient.get(0, 1), 1e-5);
+        Assert.assertEquals(gradient.get(0,2), separableGradient.get(0, 2), 1e-5);
+
+        I = new double[][]{{0.0, 0.0, 1.0/3}};
+        iterate = Matrix.from2DArray(I);
+        gradient = lrf.Gradient(iterate);
+        separableGradient = lrf.Gradient(iterate, 0, 1);
+        separableGradient = separableGradient.add(lrf.Gradient(iterate, 1, 1));
+        separableGradient = separableGradient.add(lrf.Gradient(iterate, 2, 1));
+        separableGradient = separableGradient.add(lrf.Gradient(iterate, 3, 1));
+        separableGradient = separableGradient.divide(4);
+        Assert.assertEquals(gradient.get(0,0), separableGradient.get(0, 0), 1e-5);
+        Assert.assertEquals(gradient.get(0,1), separableGradient.get(0, 1), 1e-5);
+        Assert.assertEquals(gradient.get(0,2), separableGradient.get(0, 2), 1e-5);
+
+        I = new double[][]{{10, -204.5, 23.5}};
+        iterate = Matrix.from2DArray(I);
+        gradient = lrf.Gradient(iterate);
+        separableGradient = lrf.Gradient(iterate, 0, 1);
+        separableGradient = separableGradient.add(lrf.Gradient(iterate, 1, 1));
+        separableGradient = separableGradient.add(lrf.Gradient(iterate, 2, 1));
+        separableGradient = separableGradient.add(lrf.Gradient(iterate, 3, 1));
+        separableGradient = separableGradient.divide(4);
+        Assert.assertEquals(gradient.get(0,0), separableGradient.get(0, 0), 1e-5);
+        Assert.assertEquals(gradient.get(0,1), separableGradient.get(0, 1), 1e-5);
+        Assert.assertEquals(gradient.get(0,2), separableGradient.get(0, 2), 1e-5);
+    }
+
     @Test
     public void LinearRegressionFunctionSimpleFitInterceptGradient()
     {
@@ -212,26 +273,27 @@ public class LinearRegressionTest
 
     double[][] I = new double[][]{{1, 1, 1}};
     Matrix iterate = Matrix.from2DArray(I);
-
     Matrix Gradient1 = lrf1.Gradient(iterate);
     Matrix Gradient2 = lrf2.Gradient(iterate);
-
     Assert.assertEquals(Gradient1.get(0,0), Gradient2.get(0,0), 1e-5);
     Assert.assertEquals(Gradient1.get(0,1), Gradient2.get(0,1), 1e-5);
     Assert.assertEquals(Gradient1.get(0,2), Gradient2.get(0,2), 1e-5);
 
     I = new double[][]{{0.0, 0.0, 0.0}};
     iterate = Matrix.from2DArray(I);
+    Gradient1 = lrf1.Gradient(iterate);
+    Gradient2 = lrf2.Gradient(iterate);
     Assert.assertEquals(Gradient1.get(0,0), Gradient2.get(0,0), 1e-5);
     Assert.assertEquals(Gradient1.get(0,1), Gradient2.get(0,1), 1e-5);
     Assert.assertEquals(Gradient1.get(0,2), Gradient2.get(0,2), 1e-5);
 
     I = new double[][]{{123.5, 140.5, 157.5}};
     iterate = Matrix.from2DArray(I);
+    Gradient1 = lrf1.Gradient(iterate);
+    Gradient2 = lrf2.Gradient(iterate);
     Assert.assertEquals(Gradient1.get(0,0), Gradient2.get(0,0), 1e-5);
     Assert.assertEquals(Gradient1.get(0,1), Gradient2.get(0,1), 1e-5);
     Assert.assertEquals(Gradient1.get(0,2), Gradient2.get(0,2), 1e-5);
-
     }
 
     @Test
