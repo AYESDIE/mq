@@ -19,15 +19,4 @@ public class GradientDescentTestFunction extends DifferentiableFunction
         return iterate.multiply(2);
     }
 
-
-    public static void main(String[] args)
-    {
-        GradientDescentTestFunction function = new GradientDescentTestFunction();
-        GradientDescent optimizer = new GradientDescent(0.01, 1000, 1e-9);
-
-        double[][] A = {{1, 3, 2}};
-        Matrix M = Matrix.from2DArray(A);
-
-        optimizer.Optimize(function, M);
-    }
 }
