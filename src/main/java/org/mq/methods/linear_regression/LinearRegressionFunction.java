@@ -13,60 +13,29 @@ public class LinearRegressionFunction extends DifferentiableFunction {
     {
         this.dataset = dataset;
         this.labels = labels;
-        this.fitIntercept = false;
         this.lambda = 0.0;
     }
 
     public LinearRegressionFunction(Matrix dataset,
                                     Matrix labels,
-                                    boolean fitIntercept)
-    {
-        this.dataset = dataset;
-        this.labels = labels;
-        this.fitIntercept = fitIntercept;
-        this.lambda = 0.0;
-    }
-
-    public LinearRegressionFunction(Matrix dataset,
-                                    Matrix labels,
-                                    boolean fitIntercept,
                                     double lambda)
     {
         this.dataset = dataset;
         this.labels = labels;
-        this.fitIntercept = fitIntercept;
         this.lambda = lambda;
     }
 
     public double Evaluate(Matrix iterate)
     {
 
-        if (fitIntercept)
-        {
-            double loss;
-            Matrix cost;
-            int column = dataset.columns();
+        double loss;
+        Matrix cost;
+        Matrix first = (iterate.multiply(dataset.transpose()).subtract(labels));
+        Matrix fourth = (iterate.multiply(iterate.transpose()).multiply(lambda * 1.0/(2 * numFunctions())));
+        cost = ((first.multiply(first.transpose())).multiply(1.0/(2 * numFunctions())).add(fourth));
+        loss = cost.get(0, 0);
 
-            double bias = iterate.get(0,0);
-            iterate = iterate.slice(0, 1, 1, column);
-
-            Matrix first = iterate.multiply(dataset.transpose()).subtract(labels);
-            Matrix fourth = iterate.multiply(iterate.transpose()).multiply(lambda * 1.0/(2 * numFunctions()));
-            cost = first.multiply(first.transpose()).multiply(1.0/(2 * numFunctions())).add(fourth);
-            loss = cost.get(0, 0);
-
-            return loss;
-        }
-        else
-        {
-            double loss;
-            Matrix first = iterate.multiply(dataset.transpose()).subtract(labels);
-            Matrix fourth = iterate.multiply(iterate.transpose()).multiply(lambda * 1.0/(2 * numFunctions()));
-            Matrix cost = first.multiply(first.transpose()).multiply(1.0 / (2 * numFunctions())).add(fourth);
-            loss = cost.get(0, 0);
-
-            return loss;
-        }
+        return loss;
     }
     public Matrix Gradient(Matrix iterate)
     {
@@ -115,7 +84,7 @@ public class LinearRegressionFunction extends DifferentiableFunction {
         dataset1 = dataset.slice(id, 0, batchSize + id, columns);
 
         Matrix labels1;
-        labels1 = labels.slice(0, id, 1,  batchSize + id);
+        labels1 = labels.slice(0, id, 1, batchSize + id);
 
         Matrix second = (iterate.multiply(dataset1.transpose()).subtract(labels1));
         Matrix third = (iterate.multiply(lambda * 1.0/batchSize));
@@ -127,7 +96,6 @@ public class LinearRegressionFunction extends DifferentiableFunction {
 
     private Matrix dataset;
     private Matrix labels;
-    private boolean fitIntercept;
     private double lambda;
 
     public static void main(String[] args)
