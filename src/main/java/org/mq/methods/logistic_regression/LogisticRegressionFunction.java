@@ -108,7 +108,7 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         }
 
         Matrix reg = iterate.multiply(lambda / (2 * numFunctions())).transpose();
-        return gradient.add(reg);
+        return gradient.add(reg).transpose();
     }
 
     public Matrix Gradient(Matrix iterate,
@@ -145,7 +145,7 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         }
 
         Matrix reg = iterate.multiply(lambda / (2 * batchSize)).transpose();
-        return gradient.add(reg);
+        return gradient.add(reg).transpose();
     }
 
     public int numFunctions()
@@ -153,7 +153,19 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         return dataset.rows();
     }
 
-    private static Matrix Reciprocal(Matrix M)
+    public Matrix initializeWeights()
+    {
+        if (fitIntercept)
+        {
+            return Matrix.zero(dataset.columns() + 1, 1);
+        }
+        else
+        {
+            return Matrix.zero(dataset.columns(), 1);
+        }
+    }
+
+    public static Matrix Reciprocal(Matrix M)
     {
         double[][] R = new double[M.rows()][M.columns()];
 
@@ -168,7 +180,7 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         return Matrix.from2DArray(R);
     }
 
-    private static Matrix Exponential(Matrix M)
+    public static Matrix Exponential(Matrix M)
     {
         double[][] R = new double[M.rows()][M.columns()];
 
@@ -183,7 +195,7 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         return Matrix.from2DArray(R);
     }
 
-    private static Matrix Log(Matrix M)
+    public static Matrix Log(Matrix M)
     {
         double[][] R = new double[M.rows()][M.columns()];
 
@@ -198,7 +210,7 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         return Matrix.from2DArray(R);
     }
 
-    private static Matrix SchurProduct(Matrix M1, Matrix M2)
+    public static Matrix SchurProduct(Matrix M1, Matrix M2)
     {
         double[][] R = new double[M1.rows()][M1.columns()];
 
