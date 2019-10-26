@@ -192,24 +192,24 @@ public class LogisticRegressionTest
         iterate = iterate.transpose();
         Matrix gradient = lrf.Gradient(iterate);
         Assert.assertEquals(gradient.get(0, 0), 1.249382, 1e-3);
-        Assert.assertEquals(gradient.get(0, 1), 1.748763, 1e-3);
-        Assert.assertEquals(gradient.get(0, 2), 2.248145, 1e-3);
+        Assert.assertEquals(gradient.get(1, 0), 1.748763, 1e-3);
+        Assert.assertEquals(gradient.get(2, 0), 2.248145, 1e-3);
 
         P = new double[][]{{9.382532, 0.88376, -7.615013}};
         iterate = Matrix.from2DArray(P);
         iterate = iterate.transpose();
         gradient = lrf.Gradient(iterate);
         Assert.assertEquals(gradient.get(0, 0), -0.002367, 1e-3);
-        Assert.assertEquals(gradient.get(0, 1), 0.00022, 1e-3);
-        Assert.assertEquals(gradient.get(0, 2), 0.001927, 1e-3);
+        Assert.assertEquals(gradient.get(1, 0), 0.00022, 1e-3);
+        Assert.assertEquals(gradient.get(2, 0), 0.001927, 1e-3);
 
         P = new double[][]{{-5, 3, -7}};
         iterate = Matrix.from2DArray(P);
         iterate = iterate.transpose();
         gradient = lrf.Gradient(iterate);
         Assert.assertEquals(gradient.get(0, 0), -4.25, 1e-3);
-        Assert.assertEquals(gradient.get(0, 1), -4.75, 1e-3);
-        Assert.assertEquals(gradient.get(0, 2), -5.25, 1e-3);
+        Assert.assertEquals(gradient.get(1, 0), -4.75, 1e-3);
+        Assert.assertEquals(gradient.get(2, 0), -5.25, 1e-3);
     }
 
     @Test
@@ -235,8 +235,8 @@ public class LogisticRegressionTest
         separableGradient = separableGradient.add(lrf.Gradient(iterate, 2, 1));
         separableGradient = separableGradient.divide(4);
         Assert.assertEquals(gradient.get(0, 0), separableGradient.get(0, 0), 1e-3);
-        Assert.assertEquals(gradient.get(0, 1), separableGradient.get(0, 1), 1e-3);
-        Assert.assertEquals(gradient.get(0, 2), separableGradient.get(0, 2), 1e-3);
+        Assert.assertEquals(gradient.get(1, 0), separableGradient.get(1, 0), 1e-3);
+        Assert.assertEquals(gradient.get(2, 0), separableGradient.get(2, 0), 1e-3);
     }
 
     @Test
@@ -266,8 +266,8 @@ public class LogisticRegressionTest
         Matrix gradient1 = lrf1.Gradient(iterate);
         Matrix gradient2 = lrf2.Gradient(iterate);
         Assert.assertEquals(gradient1.get(0, 0), gradient2.get(0, 0), 1e-3);
-        Assert.assertEquals(gradient1.get(0, 1), gradient2.get(0, 1), 1e-3);
-        Assert.assertEquals(gradient1.get(0, 2), gradient2.get(0, 2), 1e-3);
+        Assert.assertEquals(gradient1.get(1, 0), gradient2.get(1, 0), 1e-3);
+        Assert.assertEquals(gradient1.get(2, 0), gradient2.get(2, 0), 1e-3);
 
         P = new double[][]{{9.382532, 0.88376, -7.615013}};
         iterate = Matrix.from2DArray(P);
@@ -275,8 +275,8 @@ public class LogisticRegressionTest
         gradient1 = lrf1.Gradient(iterate);
         gradient2 = lrf2.Gradient(iterate);
         Assert.assertEquals(gradient1.get(0, 0), gradient2.get(0, 0), 1e-3);
-        Assert.assertEquals(gradient1.get(0, 1), gradient2.get(0, 1), 1e-3);
-        Assert.assertEquals(gradient1.get(0, 2), gradient2.get(0, 2), 1e-3);
+        Assert.assertEquals(gradient1.get(1, 0), gradient2.get(1, 0), 1e-3);
+        Assert.assertEquals(gradient1.get(2, 0), gradient2.get(2, 0), 1e-3);
 
         P = new double[][]{{-5, 3, -7}};
         iterate = Matrix.from2DArray(P);
@@ -284,8 +284,8 @@ public class LogisticRegressionTest
         gradient1 = lrf1.Gradient(iterate);
         gradient2 = lrf2.Gradient(iterate);
         Assert.assertEquals(gradient1.get(0, 0), gradient2.get(0, 0), 1e-3);
-        Assert.assertEquals(gradient1.get(0, 1), gradient2.get(0, 1), 1e-3);
-        Assert.assertEquals(gradient1.get(0, 2), gradient2.get(0, 2), 1e-3);
+        Assert.assertEquals(gradient1.get(1, 0), gradient2.get(1, 0), 1e-3);
+        Assert.assertEquals(gradient1.get(2, 0), gradient2.get(2, 0), 1e-3);
     }
 
     @Test
@@ -318,7 +318,31 @@ public class LogisticRegressionTest
         separableGradient = separableGradient.add(lrf2.Gradient(iterate, 2, 1));
         separableGradient = separableGradient.divide(4);
         Assert.assertEquals(gradient.get(0, 0), separableGradient.get(0, 0), 1e-3);
-        Assert.assertEquals(gradient.get(0, 1), separableGradient.get(0, 1), 1e-3);
-        Assert.assertEquals(gradient.get(0, 2), separableGradient.get(0, 2), 1e-3);
+        Assert.assertEquals(gradient.get(1, 0), separableGradient.get(1, 0), 1e-3);
+        Assert.assertEquals(gradient.get(2, 0), separableGradient.get(2, 0), 1e-3);
+    }
+
+    @Test
+    public void LogisticRegressionFunctionInitializeWeights()
+    {
+        double[][] D1 = {{1, 2, 3},
+                         {1, 4, 5},
+                         {1, 6, 7},
+                         {1, 8, 9}};
+        Matrix dataset1 = Matrix.from2DArray(D1);
+
+        double[][] D2 = {{2, 3},
+                         {4, 5},
+                         {6, 7},
+                         {8, 9}};
+        Matrix dataset2 = Matrix.from2DArray(D2);
+
+        double[][] L = {{0, 0, 1 ,1}};
+        Matrix labels = Matrix.from2DArray(L);
+
+        LogisticRegressionFunction lrf1 = new LogisticRegressionFunction(dataset1, labels);
+        LogisticRegressionFunction lrf2 = new LogisticRegressionFunction(dataset2, labels, true);
+
+        Assert.assertEquals(lrf1.Evaluate(lrf1.initializeWeights()), lrf2.Evaluate(lrf2.initializeWeights()), 1e-3);
     }
 }
