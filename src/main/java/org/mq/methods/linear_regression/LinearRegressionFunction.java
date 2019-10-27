@@ -61,36 +61,6 @@ public class LinearRegressionFunction extends DifferentiableFunction {
         loss = cost.get(0, 0);
         return loss + reg;
     }
-    public Matrix Gradient(Matrix iterate)
-    {
-        Matrix gradient;
-        Matrix error;
-        if(fitIntercept)
-        {
-            double bias = iterate.get(0, 0);
-            Matrix parameters = iterate.slice(0, 1, 1, iterate.columns());
-            error = (parameters.multiply(dataset.transpose()).add(bias)).subtract(labels);
-
-            gradient = (error.multiply(dataset)).divide(numFunctions());
-
-            double[] B = new double[]{error.divide(numFunctions()).sum()};
-            Vector V = Vector.fromArray(B);
-            gradient = gradient.insertColumn(0, V);
-        }
-        else
-        {
-            gradient = (iterate.multiply(dataset.transpose()).subtract(labels));
-            gradient = (gradient.multiply(dataset)).divide(numFunctions());
-        }
-
-        Matrix reg = (iterate.multiply(lambda * 1.0 / numFunctions()));
-        return gradient.add(reg);
-    }
-
-    public int numFunctions()
-    {
-        return dataset.rows();
-    }
 
     public double Evaluate(Matrix iterate,
                            int id,
@@ -120,34 +90,69 @@ public class LinearRegressionFunction extends DifferentiableFunction {
         return loss + reg;
     }
 
+    public Matrix Gradient(Matrix iterate)
+    {
+        Matrix gradient;
+        Matrix error;
+        if (fitIntercept)
+        {
+            double bias = iterate.get(0, 0);
+            Matrix parameters = iterate.slice(0, 1, 1, iterate.columns());
+            error = (parameters.multiply(dataset.transpose()).add(bias)).subtract(labels);
+
+            gradient = (error.multiply(dataset)).divide(numFunctions());
+
+            double[] B = new double[]{error.divide(numFunctions()).sum()};
+            Vector V = Vector.fromArray(B);
+            gradient = gradient.insertColumn(0, V);
+        }
+        else
+        {
+            gradient = (iterate.multiply(dataset.transpose()).subtract(labels));
+            gradient = (gradient.multiply(dataset)).divide(numFunctions());
+        }
+
+        Matrix reg = (iterate.multiply(lambda * 1.0 / numFunctions()));
+        return gradient.add(reg);
+    }
+
+
+
     public Matrix Gradient(Matrix iterate,
                            int id,
                            int batchSize)
     {
-        Matrix dataset1;
-        int columns = dataset.columns();
-        dataset1 = dataset.slice(id, 0, batchSize + id, columns);
+        Matrix gradient;
+        Matrix error;
 
-        Matrix grad;
-
-        Matrix labels1;
-        labels1 = labels.slice(0, id, 1, batchSize + id);
-
-        if(fitIntercept)
+        if (fitIntercept)
         {
             double bias = iterate.get(0, 0);
             Matrix parameters = iterate.slice(0, 1, 1, iterate.columns());
-            grad = ((parameters.multiply(dataset1.transpose()).add(bias)).subtract(labels1));
+            error = (parameters.multiply(dataset.slice(id, 0, batchSize + id, dataset.columns()).transpose()).
+                     add(bias)).subtract(labels.slice(0,id,1,batchSize + id));
+
+            gradient = (error.multiply(dataset.slice(id, 0, batchSize + id, dataset.columns())).divide(batchSize));
+
+            double[] B = new double[]{error.divide(batchSize).sum()};
+            Vector V = Vector.fromArray(B);
+            gradient = gradient.insertColumn(0, V);
         }
         else
         {
-            grad = (iterate.multiply(dataset1.transpose()).subtract(labels1));
+            gradient = (iterate.multiply(dataset.slice(id, 0, batchSize + id, dataset.columns()).transpose()).
+                        subtract(labels.slice(0,id,1,batchSize + id)));
+            gradient = (gradient.multiply(dataset.slice(id, 0, batchSize + id, dataset.columns())).divide(batchSize));
         }
 
             Matrix reg = (iterate.multiply(lambda * 1.0 / batchSize));
-            return grad.multiply(dataset1).multiply(1.0 / batchSize).add(reg);
+            return gradient.add(reg);
     }
 
+    public int numFunctions()
+    {
+        return dataset.rows();
+    }
 
     private Matrix dataset;
     private Matrix labels;
