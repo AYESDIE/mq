@@ -154,6 +154,18 @@ public class LinearRegressionFunction extends DifferentiableFunction {
         return dataset.rows();
     }
 
+    public Matrix initializeWeights()
+    {
+        if (fitIntercept)
+        {
+            return Matrix.zero(1, dataset.columns() + 1);
+        }
+        else
+        {
+            return Matrix.zero(1, dataset.columns());
+        }
+    }
+
     private Matrix dataset;
     private Matrix labels;
     private boolean fitIntercept;

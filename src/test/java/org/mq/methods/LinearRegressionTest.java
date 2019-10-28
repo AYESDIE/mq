@@ -355,5 +355,29 @@ public class LinearRegressionTest
         Assert.assertEquals(gradient.get(0,2), separableGradient.get(0, 2), 1e-5);
     }
 
+    @Test
+    public void LinearRegressionFunctionInitializeWeights()
+    {
+        double[][] D1 = {{1, 2, 3},
+                         {1, 4, 5},
+                         {1, 6, 7},
+                         {1, 8, 9}};
+        Matrix dataset1 = Matrix.from2DArray(D1);
+
+        double[][] D2 = {{2, 3},
+                         {4, 5},
+                         {6, 7},
+                         {8, 9}};
+        Matrix dataset2 = Matrix.from2DArray(D2);
+
+        double[][] L = new double[][]{{0, 0, 1 ,1}};
+        Matrix labels = Matrix.from2DArray(L);
+
+        LinearRegressionFunction lrf1 = new LinearRegressionFunction(dataset1, labels);
+        LinearRegressionFunction lrf2 = new LinearRegressionFunction(dataset2, labels, true);
+
+        Assert.assertEquals(lrf1.Evaluate(lrf1.initializeWeights()), lrf2.Evaluate(lrf2.initializeWeights()), 1e-3);
+    }
+
 
 }
