@@ -56,8 +56,8 @@ public class LinearRegressionFunction extends DifferentiableFunction {
             error = iterate.multiply(dataset.transpose()).subtract(labels);
         }
 
-        Matrix cost = error.multiplyByItsTranspose().multiply(1.0 / (2 * numFunctions()));
-        double reg = iterate.multiply(iterate.transpose()).multiply(lambda * 1.0/(2 * numFunctions())).get(0, 0);
+        Matrix cost = error.multiplyByItsTranspose().divide(2 * numFunctions());
+        double reg = iterate.multiply(iterate.transpose()).multiply(lambda/(2 * numFunctions())).get(0, 0);
         loss = cost.get(0, 0);
         return loss + reg;
     }
@@ -84,8 +84,8 @@ public class LinearRegressionFunction extends DifferentiableFunction {
                     subtract(labels.slice(0, id, 1, lastId));
         }
 
-        Matrix cost = error.multiplyByItsTranspose().multiply(1.0 / (2 * batchSize));
-        double reg = iterate.multiply(iterate.transpose()).multiply(lambda * 1.0/(2 * batchSize)).get(0, 0);
+        Matrix cost = error.multiplyByItsTranspose().divide(2 * batchSize);
+        double reg = iterate.multiply(iterate.transpose()).multiply(lambda/(2 * batchSize)).get(0, 0);
         loss = cost.get(0, 0);
         return loss + reg;
     }
@@ -112,7 +112,7 @@ public class LinearRegressionFunction extends DifferentiableFunction {
             gradient = (gradient.multiply(dataset)).divide(numFunctions());
         }
 
-        Matrix reg = (iterate.multiply(lambda * 1.0 / numFunctions()));
+        Matrix reg = (iterate.multiply(lambda/ numFunctions()));
         return gradient.add(reg);
     }
 
@@ -145,7 +145,7 @@ public class LinearRegressionFunction extends DifferentiableFunction {
             gradient = (gradient.multiply(dataset.slice(id, 0, batchSize + id, dataset.columns())).divide(batchSize));
         }
 
-            Matrix reg = (iterate.multiply(lambda * 1.0 / batchSize));
+            Matrix reg = (iterate.multiply(lambda/ batchSize));
             return gradient.add(reg);
     }
 
