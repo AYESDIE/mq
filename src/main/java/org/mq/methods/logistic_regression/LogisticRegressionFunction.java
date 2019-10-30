@@ -25,6 +25,17 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         this.lambda = 0;
     }
 
+    public LogisticRegressionFunction(Matrix dataset,
+                                      Matrix labels,
+                                      boolean fitIntercept,
+                                      double lambda)
+    {
+        this.dataset = dataset;
+        this.labels = labels;
+        this.fitIntercept = fitIntercept;
+        this.lambda = lambda;
+    }
+
     public double Evaluate(Matrix iterate)
     {
         Matrix sigmoid;
