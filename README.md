@@ -1,5 +1,5 @@
 # mq
-A lightweight machine learning library for Java.
+A lightweight, scalable machine learning library for Java.
 
 ![](https://cdn.discordapp.com/attachments/617951895386062868/629354079264440333/mq.png)
 
