@@ -1,6 +1,7 @@
 package org.mq.methods.logistic_regression;
 
 import org.la4j.Matrix;
+import org.mq.core.math.Math;
 import org.mq.core.optimizers.Optimizers;
 import org.mq.core.optimizers.sgd.SGD;
 
@@ -58,11 +59,11 @@ public class LogisticRegression
         {
             double bias = parameters.get(0, 0);
             parameters = parameters.slice(1, 0, parameters.rows(), parameters.columns());
-            sigmoid = LogisticRegressionFunction.Reciprocal(LogisticRegressionFunction.Exponential((testDataset.multiply(parameters).add(bias)).multiply(-1)).add(1)).transpose();
+            sigmoid = Math.Reciprocal(Math.Exponential((testDataset.multiply(parameters).add(bias)).multiply(-1)).add(1)).transpose();
         }
         else
         {
-            sigmoid = LogisticRegressionFunction.Reciprocal(LogisticRegressionFunction.Exponential(testDataset.multiply(parameters).multiply(-1)).add(1)).transpose();
+            sigmoid = Math.Reciprocal(Math.Exponential(testDataset.multiply(parameters).multiply(-1)).add(1)).transpose();
         }
 
         return assignLabels(sigmoid);
