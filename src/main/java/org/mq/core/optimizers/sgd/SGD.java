@@ -2,9 +2,11 @@ package org.mq.core.optimizers.sgd;
 
 import org.la4j.Matrix;
 import java.lang.Math;
+
+import org.mq.core.optimizers.Optimizers;
 import org.mq.core.optimizers.functions.DifferentiableFunction;
 
-public class SGD
+public class SGD extends Optimizers
 {
     public SGD()
     {
@@ -95,9 +97,9 @@ public class SGD
             overallObjective += function.Evaluate(iterate, currentFunction, batchSize);
         }
 
-        System.out.println("Gradient Descent: maximum iterations ( ");
+        System.out.print("Gradient Descent: maximum iterations (");
         System.out.print(maxIterations);
-        System.out.print(") reached; terminating optimization.");
+        System.out.println(") reached; terminating optimization.");
 
         loss = overallObjective;
         return iterate;
