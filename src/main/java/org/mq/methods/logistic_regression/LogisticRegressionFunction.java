@@ -2,7 +2,6 @@ package org.mq.methods.logistic_regression;
 
 import org.la4j.Matrix;
 import org.la4j.Vector;
-import org.mq.core.math.Math;
 import org.mq.core.optimizers.functions.DifferentiableFunction;
 
 public class LogisticRegressionFunction extends DifferentiableFunction
@@ -26,17 +25,6 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         this.lambda = 0;
     }
 
-    public LogisticRegressionFunction(Matrix dataset,
-                                      Matrix labels,
-                                      boolean fitIntercept,
-                                      double lambda)
-    {
-        this.dataset = dataset;
-        this.labels = labels;
-        this.fitIntercept = fitIntercept;
-        this.lambda = lambda;
-    }
-
     public double Evaluate(Matrix iterate)
     {
         Matrix sigmoid;
@@ -44,15 +32,15 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         {
             double bias = iterate.get(0, 0);
             iterate = iterate.slice(1, 0, iterate.rows(), iterate.columns());
-            sigmoid = Math.Reciprocal(Math.Exponential((dataset.multiply(iterate).add(bias)).multiply(-1)).add(1));
+            sigmoid = Reciprocal(Exponential((dataset.multiply(iterate).add(bias)).multiply(-1)).add(1));
         }
         else
         {
-            sigmoid = Math.Reciprocal(Math.Exponential(dataset.multiply(iterate).multiply(-1)).add(1));
+            sigmoid = Reciprocal(Exponential(dataset.multiply(iterate).multiply(-1)).add(1));
         }
 
-        Matrix error1 = Math.SchurProduct(labels.transpose(), Math.Log(sigmoid)).multiply(-1);
-        Matrix error2 = Math.SchurProduct(labels.transpose().multiply(-1).add(1), Math.Log(sigmoid.multiply(-1).add(1))).multiply(-1);
+        Matrix error1 = SchurProduct(labels.transpose(), Log(sigmoid)).multiply(-1);
+        Matrix error2 = SchurProduct(labels.transpose().multiply(-1).add(1), Log(sigmoid.multiply(-1).add(1))).multiply(-1);
         Matrix error = error1.add(error2);
         double loss = error.divide(numFunctions()).sum();
 
@@ -72,15 +60,15 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         {
             double bias = iterate.get(0, 0);
             iterate = iterate.slice(1, 0, iterate.rows(), iterate.columns());
-            sigmoid = Math.Reciprocal(Math.Exponential((dataset.slice(id, 0, lastId, dataset.columns()).multiply(iterate).add(bias)).multiply(-1)).add(1));
+            sigmoid = Reciprocal(Exponential((dataset.slice(id, 0, lastId, dataset.columns()).multiply(iterate).add(bias)).multiply(-1)).add(1));
         }
         else
         {
-            sigmoid = Math.Reciprocal(Math.Exponential(dataset.slice(id, 0, lastId, dataset.columns()).multiply(iterate).multiply(-1)).add(1));
+            sigmoid = Reciprocal(Exponential(dataset.slice(id, 0, lastId, dataset.columns()).multiply(iterate).multiply(-1)).add(1));
         }
 
-        Matrix error1 = Math.SchurProduct(labels.slice(0, id, 1, lastId).transpose(), Math.Log(sigmoid)).multiply(-1);
-        Matrix error2 = Math.SchurProduct(labels.slice(0, id, 1, lastId).transpose().multiply(-1).add(1), Math.Log(sigmoid.multiply(-1).add(1))).multiply(-1);
+        Matrix error1 = SchurProduct(labels.slice(0, id, 1, lastId).transpose(), Log(sigmoid)).multiply(-1);
+        Matrix error2 = SchurProduct(labels.slice(0, id, 1, lastId).transpose().multiply(-1).add(1), Log(sigmoid.multiply(-1).add(1))).multiply(-1);
         Matrix error = error1.add(error2);
         double loss = error.divide(batchSize).sum();
 
@@ -97,11 +85,11 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         {
             double bias = iterate.get(0, 0);
             Matrix parameters = iterate.slice(1, 0, iterate.rows(), iterate.columns());
-            sigmoid = Math.Reciprocal(Math.Exponential((dataset.multiply(parameters).add(bias)).multiply(-1)).add(1));
+            sigmoid = Reciprocal(Exponential((dataset.multiply(parameters).add(bias)).multiply(-1)).add(1));
         }
         else
         {
-            sigmoid = Math.Reciprocal(Math.Exponential(dataset.multiply(iterate).multiply(-1)).add(1));
+            sigmoid = Reciprocal(Exponential(dataset.multiply(iterate).multiply(-1)).add(1));
         }
 
         Matrix error = sigmoid.subtract(labels.transpose());
@@ -134,11 +122,11 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         {
             double bias = iterate.get(0, 0);
             Matrix parameters = iterate.slice(1, 0, iterate.rows(), iterate.columns());
-            sigmoid = Math.Reciprocal(Math.Exponential((dataset.slice(id, 0, lastId, dataset.columns()).multiply(parameters).add(bias)).multiply(-1)).add(1));
+            sigmoid = Reciprocal(Exponential((dataset.slice(id, 0, lastId, dataset.columns()).multiply(parameters).add(bias)).multiply(-1)).add(1));
         }
         else
         {
-            sigmoid = Math.Reciprocal(Math.Exponential(dataset.slice(id, 0, lastId, dataset.columns()).multiply(iterate).multiply(-1)).add(1));
+            sigmoid = Reciprocal(Exponential(dataset.slice(id, 0, lastId, dataset.columns()).multiply(iterate).multiply(-1)).add(1));
         }
 
         Matrix error = sigmoid.subtract(labels.slice(0, id, 1, lastId).transpose());
@@ -175,6 +163,66 @@ public class LogisticRegressionFunction extends DifferentiableFunction
         {
             return Matrix.zero(dataset.columns(), 1);
         }
+    }
+
+    public static Matrix Reciprocal(Matrix M)
+    {
+        double[][] R = new double[M.rows()][M.columns()];
+
+        for (int i = 0; i < M.rows(); i++)
+        {
+            for (int j = 0; j < M.columns(); j++)
+            {
+                R[i][j] = 1 / M.get(i, j);
+            }
+        }
+
+        return Matrix.from2DArray(R);
+    }
+
+    public static Matrix Exponential(Matrix M)
+    {
+        double[][] R = new double[M.rows()][M.columns()];
+
+        for (int i = 0; i < M.rows(); i++)
+        {
+            for (int j = 0; j < M.columns(); j++)
+            {
+                R[i][j] = Math.exp(M.get(i, j));
+            }
+        }
+
+        return Matrix.from2DArray(R);
+    }
+
+    public static Matrix Log(Matrix M)
+    {
+        double[][] R = new double[M.rows()][M.columns()];
+
+        for (int i = 0; i < M.rows(); i++)
+        {
+            for (int j = 0; j < M.columns(); j++)
+            {
+                R[i][j] = Math.log(M.get(i, j));
+            }
+        }
+
+        return Matrix.from2DArray(R);
+    }
+
+    public static Matrix SchurProduct(Matrix M1, Matrix M2)
+    {
+        double[][] R = new double[M1.rows()][M1.columns()];
+
+        for (int i = 0; i < M1.rows(); i++)
+        {
+            for (int j = 0; j < M1.columns(); j++)
+            {
+                R[i][j] = M1.get(i, j) * M2.get(i, j);
+            }
+        }
+
+        return Matrix.from2DArray(R);
     }
 
     private Matrix dataset;

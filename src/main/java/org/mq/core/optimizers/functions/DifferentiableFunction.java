@@ -2,7 +2,7 @@ package org.mq.core.optimizers.functions;
 
 import org.la4j.Matrix;
 
-public abstract class DifferentiableFunction
+public class DifferentiableFunction
 {
     public double Evaluate(Matrix iterate)
     {
