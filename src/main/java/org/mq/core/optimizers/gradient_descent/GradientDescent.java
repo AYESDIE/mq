@@ -2,9 +2,11 @@ package org.mq.core.optimizers.gradient_descent;
 
 import org.la4j.Matrix;
 import java.lang.Math;
+
+import org.mq.core.optimizers.Optimizers;
 import org.mq.core.optimizers.functions.DifferentiableFunction;
 
-public class GradientDescent
+public class GradientDescent extends Optimizers
 {
     public GradientDescent()
     {
