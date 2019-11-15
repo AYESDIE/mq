@@ -5,6 +5,11 @@ A lightweight, scalable machine learning library for Java.
 
 Licensed under: Apache License Version 2.0
 
+#### 1. Build and Test
+
+```
+$ mvn test
+```
 
 <p>
   <a href="https://discord.gg/FXmq4p2"><img src="https://img.shields.io/badge/discord-join-7289DA.svg?logo=discord&longCache=true&style=flat" /></a>

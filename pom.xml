@@ -6,7 +6,7 @@
     <groupId>org.mq</groupId>
     <artifactId>mq</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <name>mq</name>
     <description>A lightweight machine learning library for Java.</description>
     <url>https://github.com/AYESDIE/mq</url>
